@@ -1,0 +1,5 @@
+As a user, I want to search for classmates by username and send them a friend request, so we can use SHARETIME together.
+As a user, I want to add my classes, work shifts and study sessions with a time and location, so I can feel more in control of my week.
+As a user, I want to edit or delete an event, so my schedule stays accurate when plans change.
+As a user that has a group project, I want to see my teammates shared schedules in one place, so I can pick meeting times and see who is available.
+As a user, I want pending requests and strangers to see none of my schedule, so my information is only available to friends.
