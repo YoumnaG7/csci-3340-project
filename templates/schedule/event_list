@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ title }}</h2>
+{% for event in events %}
+  <div class="card">
+    <div class="row">
+      <a href="{% url 'event_detail' event.pk %}"><strong>{{ event.title }}</strong></a>
+      <span class="muted">{{ event.start_time|date:"D M j, g:i A" }} – {{ event.end_time|date:"g:i A" }}</span>
+    </div>
+    {% if show_owner %}
+      <div class="muted">by <a href="{% url 'user_schedule' event.owner.username %}">{{ event.owner.username }}</a></div>
+    {% endif %}
+    {% if event.location %}<div class="muted">📍 {{ event.location }}</div>{% endif %}
+  </div>
+{% empty %}
+  <div class="card muted">Nothing upcoming.</div>
+{% endfor %}
+{% endblock %}

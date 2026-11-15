@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="row">
+    <h2 style="margin:0">{{ event.title }}</h2>
+    {% if event.owner == user %}
+      <span>
+        <a href="{% url 'event_edit' event.pk %}">Edit</a> ·
+        <a href="{% url 'event_delete' event.pk %}">Delete</a>
+      </span>
+    {% endif %}
+  </div>
+  <p class="muted">
+    {{ event.start_time|date:"D M j, g:i A" }} – {{ event.end_time|date:"g:i A" }}
+    {% if event.location %} · 📍 {{ event.location }}{% endif %}<br>
+    by <a href="{% url 'user_schedule' event.owner.username %}">{{ event.owner.username }}</a>
+    {% if event.owner == user %} · visibility: {{ event.get_visibility_display }}{% endif %}
+  </p>
+  {% if event.description %}<p>{{ event.description|linebreaksbr }}</p>{% endif %}
+</div>
+
+<h3>Comments</h3>
+<ul class="plain" id="comments">
+  {% for c in comments %}
+    <li class="card">
+      <strong>{{ c.author.username }}</strong>
+      <span class="muted">{{ c.created_at|date:"M j, g:i A" }}</span>
+      <div>{{ c.text|linebreaksbr }}</div>
+    </li>
+  {% empty %}
+    <li class="muted" id="no-comments">No comments yet.</li>
+  {% endfor %}
+</ul>
+
+<form method="post" class="card">{% csrf_token %}
+  {{ form.text }}
+  <p><button type="submit">Post comment</button></p>
+</form>
+
+<script>
+  // "Live" updates via polling: ask the server for new comments every 4 seconds.
+  let lastId = {{ last_comment_id }};
+  const list = document.getElementById("comments");
+  const pollUrl = "{% url 'comments_since' event.pk %}";
+
+  async function poll() {
+    try {
+      const res = await fetch(pollUrl + "?after=" + lastId);
+      if (!res.ok) return;
+      const data = await res.json();
+      for (const c of data.comments) {
+        const empty = document.getElementById("no-comments");
+        if (empty) empty.remove();
+
+        const li = document.createElement("li");
+        li.className = "card";
+        const name = document.createElement("strong");
+        name.textContent = c.author;
+        const time = document.createElement("span");
+        time.className = "muted";
+        time.textContent = " " + c.created_at;
+        const body = document.createElement("div");
+        body.textContent = c.text;   // textContent => no HTML injection
+        li.append(name, time, body);
+        list.appendChild(li);
+        lastId = c.id;
+      }
+    } catch (err) { /* ignore network hiccups, try again next tick */ }
+  }
+  setInterval(poll, 4000);
+</script>
+{% endblock %}
