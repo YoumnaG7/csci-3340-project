@@ -3,3 +3,6 @@ As a user, I want to add my classes, work shifts and study sessions with a time 
 As a user, I want to edit or delete an event, so my schedule stays accurate when plans change.
 As a user that has a group project, I want to see my teammates shared schedules in one place, so I can pick meeting times and see who is available.
 As a user, I want pending requests and strangers to see none of my schedule, so my information is only available to friends.
+As a user, I want to see the status of my friend requests, so I can check if my requests are pending or accepted.
+As a user, I want to be able to accept incoming friend requests, so I can become friends with other students.
+As a user, I want to view my friends list, so I can see who has access to schedule and the other way around.
