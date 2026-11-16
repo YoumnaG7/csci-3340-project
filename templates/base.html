@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sharetime helps students share their class schedules and campus plans with the friends they choose.">
+    <title>Sharetime | Your campus, in sync</title>
+    <style>
+        :root {
+            --green-900: #1f4a38;
+            --green-700: #2f6b50;
+            --green-100: #e3ecdc;
+            --green-50: #eef3ea;
+            --bg: #f6f7f3;
+            --surface: #ffffff;
+            --line: #e6e8e2;
+            --text: #1d2b25;
+            --muted: #66716a;
+            --teal-bg: #dcebea;   --teal-bar: #4f8a8b;
+            --purple-bg: #e7e3f0; --purple-bar: #7b6aa8;
+            --peach-bg: #f7e5d3;  --peach-bar: #c28a5a;
+            --green-bg: #e3ecdc;  --green-bar: #5b7d4f;
+            --radius: 16px;
+            --max: 1120px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.55;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        :focus-visible { outline: 2px solid var(--green-700); outline-offset: 3px; border-radius: 6px; }
+
+        .wrap { width: min(var(--max), 100% - 40px); margin-inline: auto; }
+
+        /* ---------- Buttons ---------- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 13px 24px; border-radius: 12px; font-weight: 600; font-size: .95rem;
+            border: 1px solid transparent; cursor: pointer;
+        }
+        .btn-primary { background: var(--green-900); color: #fff; }
+        .btn-primary:hover { background: var(--green-700); }
+        .btn-ghost { background: var(--surface); color: var(--green-900); border-color: var(--line); }
+        .btn-ghost:hover { background: var(--green-50); }
+        .btn-light { background: #fff; color: var(--green-900); }
+        .btn-light:hover { background: var(--green-50); }
+
+        /* ---------- Header ---------- */
+        .site-header { position: sticky; top: 0; z-index: 10; background: rgba(246, 247, 243, .9); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 24px; }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 600; color: var(--green-900); }
+        .brand-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--green-900); color: #fff; display: grid; place-items: center; font-weight: 700; }
+        .site-nav { display: flex; gap: 28px; font-size: .92rem; color: var(--muted); }
+        .site-nav a:hover { color: var(--green-900); }
+        .header-cta { display: flex; align-items: center; gap: 12px; }
+        .header-cta .login { font-size: .92rem; color: var(--muted); font-weight: 500; }
+        .header-cta .btn { padding: 10px 18px; font-size: .88rem; }
+
+        /* ---------- Hero ---------- */
+        .hero { padding: 72px 0 64px; }
+        .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
+        .pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--green-100); color: var(--green-900);
+            font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+            padding: 7px 14px; border-radius: 999px; margin-bottom: 22px;
+        }
+        .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green-700); }
+        .hero h1 { margin: 0 0 18px; font-size: clamp(2.2rem, 5vw, 3.5rem); line-height: 1.08; letter-spacing: -.02em; color: var(--green-900); }
+        .hero h1 span { color: var(--green-700); }
+        .hero p.lead { margin: 0 0 30px; font-size: 1.1rem; color: var(--muted); max-width: 30em; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-note { margin: 18px 0 0; font-size: .8rem; color: var(--muted); }
+
+        /* Hero preview card */
+        .preview { position: relative; padding: 0 0 28px 28px; }
+        .preview-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 24px 50px -24px rgba(31, 74, 56, .35); overflow: hidden; }
+        .preview-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--line); font-size: .8rem; color: var(--muted); }
+        .preview-top strong { color: var(--green-900); font-size: .9rem; }
+        .mini { --hour: 34px; display: grid; grid-template-columns: 40px repeat(3, 1fr); }
+        .mini .heads { display: contents; font-size: .68rem; color: var(--muted); }
+        .mini .heads div { padding: 8px 8px; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); }
+        .mini .heads div:first-child { border-left: 0; }
+        .mini .heads .today { background: var(--green-50); color: var(--green-900); font-weight: 600; }
+        .mini .times { display: grid; grid-auto-rows: var(--hour); }
+        .mini .times span { font-size: .6rem; color: var(--muted); text-align: right; padding-right: 6px; transform: translateY(-6px); }
+        .mini .col {
+            position: relative; height: calc(var(--hour) * 7); border-left: 1px solid var(--line);
+            background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--hour) - 1px), var(--line) calc(var(--hour) - 1px), var(--line) var(--hour));
+        }
+        .ev {
+            position: absolute; left: 4px; right: 4px;
+            top: calc(var(--start) * var(--hour)); height: calc(var(--dur) * var(--hour) - 2px);
+            border-left: 3px solid; border-radius: 6px; padding: 4px 7px; overflow: hidden;
+            font-size: .64rem; line-height: 1.25;
+        }
+        .ev b { display: block; font-size: .68rem; font-weight: 600; }
+        .ev span { color: var(--muted); }
+        .ev.green  { background: var(--green-bg);  border-color: var(--green-bar); }
+        .ev.teal   { background: var(--teal-bg);   border-color: var(--teal-bar); }
+        .ev.purple { background: var(--purple-bg); border-color: var(--purple-bar); }
+        .ev.peach  { background: var(--peach-bg);  border-color: var(--peach-bar); }
+
+        .float {
+            position: absolute; left: 0; bottom: 0; width: 240px;
+            background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+            padding: 14px 16px; box-shadow: 0 16px 36px -18px rgba(31, 74, 56, .4); font-size: .78rem;
+        }
+        .float .live { font-size: .6rem; font-weight: 700; letter-spacing: .08em; color: var(--green-900); }
+        .float .live::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green-700); margin-right: 5px; }
+        .float strong { display: block; margin-top: 6px; color: var(--text); }
+        .float p { margin: 2px 0 0; color: var(--muted); }
+
+        /* ---------- Sections ---------- */
+        section { scroll-margin-top: 80px; }
+        .section { padding: 72px 0; }
+        .section-head { text-align: center; max-width: 620px; margin: 0 auto 44px; }
+        .section-head .eyebrow { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--green-700); font-weight: 600; margin: 0 0 10px; }
+        .section-head h2 { margin: 0 0 12px; font-size: clamp(1.7rem, 3.5vw, 2.3rem); line-height: 1.15; letter-spacing: -.01em; color: var(--green-900); }
+        .section-head p { margin: 0; color: var(--muted); }
+
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .feature { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+        .icon { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 18px; color: var(--green-900); }
+        .icon.green { background: var(--green-bg); }
+        .icon.teal { background: var(--teal-bg); }
+        .icon.peach { background: var(--peach-bg); }
+        .feature h3 { margin: 0 0 8px; font-size: 1.1rem; color: var(--green-900); }
+        .feature p { margin: 0; font-size: .92rem; color: var(--muted); }
+
+        .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; list-style: none; padding: 0; margin: 0; }
+        .steps li { position: relative; padding: 28px; background: var(--green-50); border-radius: var(--radius); counter-increment: step; }
+        .steps li::before {
+            content: counter(step); display: grid; place-items: center;
+            width: 34px; height: 34px; border-radius: 50%; margin-bottom: 16px;
+            background: var(--green-900); color: #fff; font-weight: 600; font-size: .9rem;
+        }
+        .steps h3 { margin: 0 0 6px; font-size: 1.05rem; color: var(--green-900); }
+        .steps p { margin: 0; font-size: .9rem; color: var(--muted); }
+
+        /* ---------- Privacy split ---------- */
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+        .split h2 { margin: 0 0 14px; font-size: clamp(1.7rem, 3.5vw, 2.3rem); line-height: 1.15; color: var(--green-900); }
+        .split p { margin: 0 0 18px; color: var(--muted); }
+        .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+        .checks li { display: flex; gap: 10px; align-items: flex-start; font-size: .95rem; }
+        .checks svg { width: 20px; height: 20px; color: var(--green-700); margin-top: 2px; }
+        .circle-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
+        .circle-card h3 { margin: 0 0 4px; color: var(--green-900); }
+        .circle-card > p { font-size: .85rem; margin-bottom: 18px; }
+        .friend { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--line); font-size: .9rem; }
+        .friend .who { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; font-weight: 600; color: var(--green-900); }
+        .tag { font-size: .7rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--green-100); color: var(--green-900); }
+        .tag.off { background: var(--bg); color: var(--muted); }
+
+        /* ---------- CTA ---------- */
+        .cta { background: var(--green-900); color: #fff; border-radius: 24px; padding: 56px 32px; text-align: center; margin-bottom: 72px; }
+        .cta h2 { margin: 0 0 10px; font-size: clamp(1.7rem, 3.5vw, 2.3rem); }
+        .cta p { margin: 0 0 26px; color: #cfe0d6; }
+
+        /* ---------- Footer ---------- */
+        .site-footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: .85rem; color: var(--muted); }
+        .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+        .footer-links { display: flex; gap: 22px; }
+        .footer-links a:hover { color: var(--green-900); }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 960px) {
+            .hero { padding-top: 48px; }
+            .hero-grid, .split { grid-template-columns: 1fr; gap: 40px; }
+            .features, .steps { grid-template-columns: 1fr; }
+            .site-nav { display: none; }
+        }
+        @media (max-width: 520px) {
+            .header-cta .login { display: none; }
+            .preview { padding-left: 0; }
+            .float { position: static; width: 100%; margin-top: 14px; }
+        }
+        @media (prefers-reduced-motion: no-preference) {
+            .btn { transition: background-color .15s ease, transform .15s ease; }
+            .btn:hover { transform: translateY(-1px); }
+        }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="wrap header-inner">
+        <a href="/" class="brand" aria-label="Sharetime home">
+            <span class="brand-mark" aria-hidden="true">S</span> sharetime
+        </a>
+        <nav class="site-nav" aria-label="Main">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#privacy">Privacy</a>
+        </nav>
+        <div class="header-cta">
+            <a href="#" class="login">Log in</a>
+            <a href="#" class="btn btn-primary">Get started</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="wrap hero-grid">
+            <div>
+                <span class="pill">Your campus, in sync</span>
+                <h1>A little planning. <span>More possibilities.</span></h1>
+                <p class="lead">Share your class schedule with the friends you choose, see who's free, and turn gaps in your week into coffee dates, study sessions and campus nights.</p>
+                <div class="hero-actions">
+                    <a href="#" class="btn btn-primary">Create your schedule</a>
+                    <a href="#how-it-works" class="btn btn-ghost">See how it works</a>
+                </div>
+                <p class="hero-note">Free for students. You decide who sees what.</p>
+            </div>
+
+            <div class="preview" aria-hidden="true">
+                <div class="preview-card">
+                    <div class="preview-top"><strong>Your week, at a glance</strong><span>Nov 16 &ndash; 20</span></div>
+                    <div class="mini">
+                        <div class="heads">
+                            <div></div>
+                            <div class="today">MON 16</div>
+                            <div>TUE 17</div>
+                            <div>WED 18</div>
+                        </div>
+                        <div class="times">
+                            <span>9 AM</span><span>10 AM</span><span>11 AM</span><span>12 PM</span><span>1 PM</span><span>2 PM</span><span>3 PM</span>
+                        </div>
+                        <div class="col">
+                            <div class="ev green" style="--start:0; --dur:1.5"><b>Molecular Biology</b><span>9:00 &middot; S204</span></div>
+                            <div class="ev purple" style="--start:3; --dur:1.25"><b>Calculus II</b><span>12:00 &middot; M112</span></div>
+                            <div class="ev peach" style="--start:5.5; --dur:1.5"><b>Library study sesh</b><span>2:30 &middot; Library</span></div>
+                        </div>
+                        <div class="col">
+                            <div class="ev teal" style="--start:1; --dur:2"><b>Design thinking</b><span>10:00 &middot; A108</span></div>
+                            <div class="ev peach" style="--start:5; --dur:1.5"><b>Photography club</b><span>2:00 &middot; Arts hub</span></div>
+                        </div>
+                        <div class="col">
+                            <div class="ev green" style="--start:4.5; --dur:1.5"><b>Group project</b><span>1:30 &middot; Library</span></div>
+                            <div class="ev peach" style="--start:6; --dur:1"><b>Coffee with Maya</b><span>3:00 &middot; The Nook</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="float">
+                    <span class="live">LIVE</span>
+                    <strong>Maya Chen</strong>
+                    <p>&ldquo;I'll grab us a table upstairs!&rdquo;</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+        <div class="wrap">
+            <div class="section-head">
+                <p class="eyebrow">Features</p>
+                <h2>Everything your week needs, nothing it doesn't</h2>
+                <p>Sharetime keeps classes, study time and campus plans in one calm view, shared only with your circle.</p>
+            </div>
+            <div class="features">
+                <article class="feature">
+                    <div class="icon green">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+                    </div>
+                    <h3>Your week, at a glance</h3>
+                    <p>Classes, study sessions and campus events in one color-coded calendar that's easy to scan.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon teal">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6M17 11a3 3 0 100-6M21.5 19c0-2.5-1.5-4.5-3.5-5.3"/></svg>
+                    </div>
+                    <h3>Find time with friends</h3>
+                    <p>See when your people are free and plan around real schedules instead of endless group chats.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon peach">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 1112 0c0 6 2 7 2 7H4s2-1 2-7zM10 20a2 2 0 004 0"/></svg>
+                    </div>
+                    <h3>Live updates</h3>
+                    <p>Room changes, new events and comments from your circle show up the moment they happen.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works" class="section">
+        <div class="wrap">
+            <div class="section-head">
+                <p class="eyebrow">How it works</p>
+                <h2>In sync in three steps</h2>
+            </div>
+            <ol class="steps">
+                <li>
+                    <h3>Add your classes</h3>
+                    <p>Build your week in a minute with your courses, times and rooms.</p>
+                </li>
+                <li>
+                    <h3>Invite your circle</h3>
+                    <p>Bring in the friends you actually want to plan with.</p>
+                </li>
+                <li>
+                    <h3>Make plans</h3>
+                    <p>Spot shared gaps, add events and keep everyone updated in real time.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Privacy -->
+    <section id="privacy" class="section">
+        <div class="wrap split">
+            <div>
+                <p class="eyebrow" style="font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--green-700);font-weight:600;margin:0 0 10px;">Privacy</p>
+                <h2>Your schedule. Your circle.</h2>
+                <p>Only the friends you pick can see your schedule, and you can change that any time.</p>
+                <ul class="checks">
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Choose exactly who can see your week</li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Keep individual events private</li>
+                    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4 10-10"/></svg>Remove access with one click</li>
+                </ul>
+            </div>
+            <div class="circle-card" aria-hidden="true">
+                <h3>Sharing settings</h3>
+                <p>3 friends can see your schedule.</p>
+                <div class="friend"><span class="who"><span class="avatar" style="background:var(--green-bg)">MC</span>Maya Chen</span><span class="tag">Can view</span></div>
+                <div class="friend"><span class="who"><span class="avatar" style="background:var(--teal-bg)">JL</span>Jordan Lee</span><span class="tag">Can view</span></div>
+                <div class="friend"><span class="who"><span class="avatar" style="background:var(--purple-bg)">SP</span>Sam Patel</span><span class="tag">Can view</span></div>
+                <div class="friend"><span class="who"><span class="avatar" style="background:var(--peach-bg)">TR</span>Taylor Reed</span><span class="tag off">No access</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="wrap">
+        <div class="cta">
+            <h2>Better, together.</h2>
+            <p>Bring your campus into the loop.</p>
+            <a href="#" class="btn btn-light">Get started free</a>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <div class="wrap footer-inner">
+        <span>&copy; 2026 Sharetime. Made for campus life.</span>
+        <nav class="footer-links" aria-label="Footer">
+            <a href="#features">Features</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#">Contact</a>
+        </nav>
+    </div>
+</footer>
+
+</body>
+</html>
