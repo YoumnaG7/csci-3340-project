@@ -15,4 +15,5 @@ urlpatterns = [
         name="accept_friend_request"
     ),
     path("list/", views.friends_list, name="friends_list"),
+    path("remove-friend/<int:user_id>/", views.remove_friend, name="remove_friend"),
 ]

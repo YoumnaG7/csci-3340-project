@@ -115,3 +115,20 @@ def friends_list(request):
     return render(request, "testApp/friends_list.html", {
         "friends": friends
     })
+
+@login_required
+@require_POST
+def remove_friend(request, user_id):
+    friendship = get_object_or_404(
+        FriendRequest.objects.filter(
+            Q(sender=request.user, receiver_id=user_id) |
+            Q(sender_id=user_id, receiver=request.user),
+            status=FriendRequest.ACCEPTED
+        )
+    )
+
+    friendship.delete()
+
+    messages.success(request, "Friend removed successfully!")
+
+    return redirect("friends_list")
