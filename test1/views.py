@@ -4,4 +4,4 @@ def home(request):
     if request.user.is_authenticated:
         return redirect("search_users")
 
-    return render(request, "frontPage.html")
+    return render(request, "home.html")
