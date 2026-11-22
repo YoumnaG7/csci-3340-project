@@ -1,10 +1,15 @@
 {% extends "base.html" %}
+{% block title %}Delete event{% endblock %}
 {% block content %}
-<div class="card">
-  <h2>Delete "{{ event.title }}"?</h2>
-  <form method="post">{% csrf_token %}
-    <button class="danger" type="submit">Yes, delete</button>
-    <a href="{% url 'event_detail' event.pk %}">Cancel</a>
-  </form>
+<div class="auth">
+    <div class="card">
+        <p class="eyebrow">Delete event</p>
+        <h1 style="font-size:1.5rem">Delete "{{ event.title }}"?</h1>
+        <p class="muted">This also removes its comments and can't be undone.</p>
+        <form method="post" class="row" style="justify-content:flex-start">{% csrf_token %}
+            <button type="submit" class="btn btn-danger" style="width:auto">Yes, delete</button>
+            <a href="{% url 'event_detail' event.pk %}" class="btn btn-ghost">Cancel</a>
+        </form>
+    </div>
 </div>
 {% endblock %}

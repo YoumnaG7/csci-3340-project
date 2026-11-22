@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }}{% endblock %}
+{% block content %}
+<div class="narrow">
+    <div class="page-head">
+        <a href="{% url 'my_schedule' %}" class="linklike">&larr; Back to schedule</a>
+    </div>
+
+    <div class="card detail {% if event.owner == user %}green{% else %}teal{% endif %}">
+        <div class="row" style="align-items:flex-start">
+            <div>
+                <h1>{{ event.title }}</h1>
+                <div class="facts">
+                    <span>{{ event.start_time|date:"l, F j" }}</span>
+                    <span>{{ event.start_time|date:"g:i A" }} &ndash; {{ event.end_time|date:"g:i A" }}</span>
+                    {% if event.location %}<span>{{ event.location }}</span>{% endif %}
+                </div>
+                <div class="facts">
+                    <span>Shared by <a href="{% url 'user_schedule' event.owner.username %}"><strong>{{ event.owner.username }}</strong></a></span>
+                    {% if event.owner == user %}<span class="tag">{{ event.get_visibility_display }}</span>{% endif %}
+                </div>
+            </div>
+            {% if event.owner == user %}
+                <div class="actions">
+                    <a href="{% url 'event_edit' event.pk %}" class="btn btn-ghost btn-sm">Edit</a>
+                    <a href="{% url 'event_delete' event.pk %}" class="btn btn-ghost btn-sm">Delete</a>
+                </div>
+            {% endif %}
+        </div>
+        {% if event.description %}<p class="desc">{{ event.description|linebreaksbr }}</p>{% endif %}
+    </div>
+
+    <h2 class="section-title">Comments <span class="live">LIVE</span></h2>
+
+    <ul class="comments" id="comments">
+        {% for c in comments %}
+            <li class="comment">
+                <span class="avatar">{{ c.author.username|slice:":2"|upper }}</span>
+                <div class="bubble">
+                    <div class="who"><strong>{{ c.author.username }}</strong><span>{{ c.created_at|date:"M j, g:i A" }}</span></div>
+                    <p>{{ c.text|linebreaksbr }}</p>
+                </div>
+            </li>
+        {% empty %}
+            <li class="muted" id="no-comments">No comments yet. Start the conversation.</li>
+        {% endfor %}
+    </ul>
+
+    <form method="post" class="card comment-form">{% csrf_token %}
+        {{ form.text }}
+        <button type="submit" class="btn btn-primary btn-sm">Post comment</button>
+    </form>
+</div>
+
+<script>
+    // "Live" updates: ask the server for new comments every 4 seconds.
+    let lastId = {{ last_comment_id }};
+    const list = document.getElementById("comments");
+    const pollUrl = "{% url 'comments_since' event.pk %}";
+
+    async function poll() {
+        try {
+            const res = await fetch(pollUrl + "?after=" + lastId);
+            if (!res.ok) return;
+            const data = await res.json();
+            for (const c of data.comments) {
+                const empty = document.getElementById("no-comments");
+                if (empty) empty.remove();
+
+                const li = document.createElement("li");
+                li.className = "comment";
+                const av = document.createElement("span");
+                av.className = "avatar";
+                av.textContent = c.author.slice(0, 2).toUpperCase();
+                const bubble = document.createElement("div");
+                bubble.className = "bubble";
+                const who = document.createElement("div");
+                who.className = "who";
+                const name = document.createElement("strong");
+                name.textContent = c.author;
+                const time = document.createElement("span");
+                time.textContent = c.created_at;
+                who.append(name, time);
+                const p = document.createElement("p");
+                p.textContent = c.text;   // textContent => no HTML injection
+                bubble.append(who, p);
+                li.append(av, bubble);
+                list.appendChild(li);
+                lastId = c.id;
+            }
+        } catch (err) { /* network hiccup, try again next tick */ }
+    }
+    setInterval(poll, 4000);
+</script>
+{% endblock %}

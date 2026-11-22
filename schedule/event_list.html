@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="narrow">
+    <div class="page-head">
+        <div>
+            <p class="eyebrow">{% if show_owner %}From your circle{% else %}Upcoming{% endif %}</p>
+            <h1>{{ title }}</h1>
+        </div>
+        {% if not show_owner and title == "My schedule" %}
+            <a href="{% url 'event_create' %}" class="btn btn-primary">+ New event</a>
+        {% endif %}
+    </div>
+
+    {% for event in events %}
+        {% ifchanged event.start_time|date:"Y-m-d" %}
+            <h2 class="day">{{ event.start_time|date:"l, F j" }}</h2>
+        {% endifchanged %}
+        <a href="{% url 'event_detail' event.pk %}" class="event {% cycle 'green' 'teal' 'purple' 'peach' %}">
+            <div class="time"><b>{{ event.start_time|date:"g:i A" }}</b>to {{ event.end_time|date:"g:i A" }}</div>
+            <div>
+                <h3>{{ event.title }}</h3>
+                <div class="meta">
+                    {% if event.location %}{{ event.location }}{% endif %}
+                    {% if show_owner %}{% if event.location %} &middot; {% endif %}by {{ event.owner.username }}{% endif %}
+                </div>
+            </div>
+            {% if event.owner == user %}<span class="tag end">{{ event.get_visibility_display }}</span>{% endif %}
+        </a>
+    {% empty %}
+        <div class="card empty">
+            <h3>Nothing upcoming</h3>
+            {% if show_owner %}
+                <p>When your friends share events with you, they'll show up here.</p>
+                <a href="{% url 'friends' %}" class="btn btn-ghost">Find friends</a>
+            {% else %}
+                <p>Add your classes and plans to get your week started.</p>
+                <a href="{% url 'event_create' %}" class="btn btn-primary">Add an event</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
