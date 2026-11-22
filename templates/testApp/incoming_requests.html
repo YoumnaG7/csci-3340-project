@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incoming Friend Requests | SHARETIME</title>
+</head>
+<body>
+
+    <h1>Incoming Friend Requests</h1>
+
+    {% if messages %}
+    {% for message in messages %}
+        <p>{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+
+    {% if requests %}
+        <ul>
+            {% for friend_request in requests %}
+                <li>
+                    {{ friend_request.sender.username }}
+
+                    <form method="POST" action="{% url 'accept_friend_request' friend_request.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Accept</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You don't have any pending friend requests.</p>
+    {% endif %}
+
+</body>
+</html>
